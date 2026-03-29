@@ -251,8 +251,8 @@ function lerpHex(c1, c2, t) {
 const canvas = document.getElementById('c');
 const ctx = canvas.getContext('2d');
 
-// Pixel size — bigger = chunkier pixels
-const PIXEL = 6;
+// Pixel size — 4 = finer detail, still chunky pixel art
+const PIXEL = 4;
 let W, H, cols, rows;
 
 function resize() {
@@ -267,22 +267,22 @@ window.addEventListener('resize', () => { resize(); buildMountains(); });
 
 // ── Sky palettes per phase ─────────────────────────────────────
 const PHASES = [
-  // 0: night
-  { name:'NIGHT',   top:'#03050f', mid:'#060d24', hor:'#0d1840', sunR:0,   sunG:0,   sunB:0,   sunAlpha:0,   starAlpha:1,   moonAlpha:1  },
-  // 1: pre-dawn
-  { name:'DAWN',    top:'#0a0520', mid:'#1a0a35', hor:'#3d1a55', sunR:80,  sunG:20,  sunB:80,  sunAlpha:0.3, starAlpha:0.5, moonAlpha:0.3 },
-  // 2: sunrise
-  { name:'SUNRISE', top:'#1a0a2e', mid:'#7a2040', hor:'#ff6030', sunR:255, sunG:140, sunB:40,  sunAlpha:1,   starAlpha:0,   moonAlpha:0  },
-  // 3: golden hour
-  { name:'GOLDEN HOUR', top:'#0a1a40', mid:'#3a1060', hor:'#ff8c30', sunR:255, sunG:200, sunB:80,  sunAlpha:1,   starAlpha:0,   moonAlpha:0  },
-  // 4: day
-  { name:'DAY',     top:'#0a2060', mid:'#1a5090', hor:'#60b8f0', sunR:255, sunG:240, sunB:180, sunAlpha:1,   starAlpha:0,   moonAlpha:0  },
-  // 5: afternoon
-  { name:'AFTERNOON',top:'#0d2868', mid:'#1a5590', hor:'#5ab0e8', sunR:255, sunG:230, sunB:150, sunAlpha:0.9, starAlpha:0,   moonAlpha:0  },
-  // 6: sunset
-  { name:'SUNSET',  top:'#120820', mid:'#6a1540', hor:'#ff4010', sunR:255, sunG:80,  sunB:20,  sunAlpha:1,   starAlpha:0.1, moonAlpha:0  },
-  // 7: dusk
-  { name:'DUSK',    top:'#080518', mid:'#200a40', hor:'#601040', sunR:120, sunG:30,  sunB:60,  sunAlpha:0.4, starAlpha:0.6, moonAlpha:0.5 },
+  // 0: night — deep navy, subtle blue glow at horizon
+  { name:'NIGHT',      top:'#010208', mid:'#030818', hor:'#06122e', glow:'#0a1a40', sunR:0,   sunG:0,   sunB:0,   sunAlpha:0,   starAlpha:1,   moonAlpha:1   },
+  // 1: pre-dawn — purple haze creeping in
+  { name:'DAWN',       top:'#080318', mid:'#180828', hor:'#4a1560', glow:'#7a2060', sunR:100, sunG:20,  sunB:100, sunAlpha:0.25,starAlpha:0.5, moonAlpha:0.3 },
+  // 2: sunrise — deep crimson to blazing orange
+  { name:'SUNRISE',    top:'#120818', mid:'#6a1530', hor:'#e84010', glow:'#ff8020', sunR:255, sunG:120, sunB:20,  sunAlpha:1,   starAlpha:0,   moonAlpha:0   },
+  // 3: golden hour — warm amber sky
+  { name:'GOLDEN HOUR',top:'#0c1830', mid:'#301050', hor:'#d06010', glow:'#ffaa30', sunR:255, sunG:190, sunB:60,  sunAlpha:1,   starAlpha:0,   moonAlpha:0   },
+  // 4: day — vivid blue gradient
+  { name:'DAY',        top:'#061840', mid:'#0e3a80', hor:'#2878c8', glow:'#80c8f0', sunR:255, sunG:245, sunB:200, sunAlpha:1,   starAlpha:0,   moonAlpha:0   },
+  // 5: afternoon — slightly hazier blue
+  { name:'AFTERNOON',  top:'#081e48', mid:'#103e88', hor:'#2d80cc', glow:'#70b8e8', sunR:255, sunG:235, sunB:170, sunAlpha:0.9, starAlpha:0,   moonAlpha:0   },
+  // 6: sunset — deep magenta bleeding into orange fire
+  { name:'SUNSET',     top:'#0a0415', mid:'#580d30', hor:'#e03008', glow:'#ff6010', sunR:255, sunG:60,  sunB:10,  sunAlpha:1,   starAlpha:0.1, moonAlpha:0   },
+  // 7: dusk — violet twilight
+  { name:'DUSK',       top:'#050210', mid:'#180535', hor:'#500c38', glow:'#7a1050', sunR:100, sunG:20,  sunB:50,  sunAlpha:0.3, starAlpha:0.6, moonAlpha:0.5 },
 ];
 
 // Duration each phase lasts (ms)
@@ -585,22 +585,22 @@ function drawFireflies(ph, time) {
 // Mountain colors per layer (6 layers) per phase
 // Layer 0 = farthest back (lightest/haziest), Layer 5 = closest (darkest)
 const MTN_COLORS = [
-  // night       far→near
-  ['#0d1a3a','#0a1530','#080f22','#060c1a','#040810','#020508'],
-  // dawn
-  ['#2d1545','#251040','#1d0c35','#15082a','#0d0520','#080318'],
-  // sunrise
-  ['#7a2535','#621d2c','#4d1522','#3d1018','#2d0c12','#1a070c'],
-  // golden hour
-  ['#4a1d60','#3d1850','#301240','#240e30','#180a22','#0e0618'],
-  // day
-  ['#2a4a7a','#1e3a65','#162c50','#10203c','#0a162a','#060e1c'],
-  // afternoon
-  ['#2d4e80','#213c6a','#172e55','#102040','#0a162e','#060e1e'],
-  // sunset
-  ['#5a1525','#471020','#35090f','#260608','#180405','#0e0203'],
-  // dusk
-  ['#200840','#180630','#100422','#0c0318','#080210','#040108'],
+  // night — cold deep blue silhouettes
+  ['#080f28','#060c20','#040918','#030710','#02050c','#010308'],
+  // dawn — purple-tinted ridges
+  ['#2a1040','#220c35','#1a082a','#120520','#0c0318','#070210'],
+  // sunrise — warm crimson layers
+  ['#6a1e2a','#551825','#40121c','#2d0e14','#1e090e','#120507'],
+  // golden hour — deep violet/amber
+  ['#3d1550','#321245','#280e38','#1e0a2a','#14071e','#0a0412'],
+  // day — rich blue-green mountains
+  ['#163460','#102850','#0c1e40','#081630','#050f22','#030918'],
+  // afternoon — slightly lighter blues
+  ['#183870','#12305e','#0e244c','#091a38','#061228','#030c1a'],
+  // sunset — deep blood red layers
+  ['#4a0e18','#3a0c14','#2a0910','#1c060a','#100405','#080202'],
+  // dusk — midnight purple
+  ['#160530','#100428','#0a021e','#070116','#04010e','#020008'],
 ];
 
 // ── Draw ──────────────────────────────────────────────────────
@@ -614,15 +614,17 @@ function getPhase(t) {
 }
 
 function drawSky(ph) {
-  const top = lerpHex(ph.a.top, ph.b.top, ph.t);
-  const mid = lerpHex(ph.a.mid, ph.b.mid, ph.t);
-  const hor = lerpHex(ph.a.hor, ph.b.hor, ph.t);
+  const top  = lerpHex(ph.a.top,  ph.b.top,  ph.t);
+  const mid  = lerpHex(ph.a.mid,  ph.b.mid,  ph.t);
+  const hor  = lerpHex(ph.a.hor,  ph.b.hor,  ph.t);
+  const glow = lerpHex(ph.a.glow, ph.b.glow, ph.t);
 
-  // 3-stop gradient
-  const grad = ctx.createLinearGradient(0,0,0,H);
-  grad.addColorStop(0, top);
-  grad.addColorStop(0.5, mid);
-  grad.addColorStop(1, hor);
+  // 4-stop gradient — top, mid, horizon, horizon glow
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0,    top);
+  grad.addColorStop(0.42, mid);
+  grad.addColorStop(0.78, hor);
+  grad.addColorStop(1,    glow);
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, W, H);
 }
@@ -677,10 +679,11 @@ function drawSun(ph, time) {
 
   const sr = Math.max(3, Math.round(W * 0.03));
 
-  // Glow rings
-  for (let ring = 3; ring >= 1; ring--) {
-    const rr = sr + ring * 3;
-    ctx.fillStyle = `rgba(${r},${g},${b},${alpha * 0.12 / ring})`;
+  // Glow rings — 5 layers for richer corona
+  for (let ring = 5; ring >= 1; ring--) {
+    const rr = sr + ring * 4;
+    const ringAlpha = alpha * 0.09 / ring;
+    ctx.fillStyle = `rgba(${r},${g},${b},${ringAlpha})`;
     for (let dy = -rr; dy <= rr; dy++) {
       for (let dx = -rr; dx <= rr; dx++) {
         if (dx*dx+dy*dy <= rr*rr) ctx.fillRect(sunX+dx, sunY+dy, 1, 1);
@@ -725,10 +728,7 @@ function drawMountains(ph) {
     ctx.closePath();
     ctx.fill();
 
-    // Snow caps on back layers during night/dawn
-    if (snowPts.length && snowAlpha > 0.05) {
-      snowPts.forEach(pi => drawSnowCap(pts, pi, snowAlpha));
-    }
+
   });
 }
 
